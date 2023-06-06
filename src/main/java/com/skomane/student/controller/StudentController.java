@@ -7,18 +7,19 @@ import com.skomane.student.exceptions.StudentDoesNotExistException;
 import com.skomane.student.model.Student;
 import com.skomane.student.service.StudentService;
 import com.skomane.student.utils.StudentUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/student")
 @RequiredArgsConstructor
+@Tag(name = "Student")
 public class StudentController {
 
     private final StudentService studentService;
