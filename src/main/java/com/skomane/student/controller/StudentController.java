@@ -24,20 +24,14 @@ public class StudentController {
 
     private final StudentService studentService;
 
-
-    @ExceptionHandler({StudentAlreadyExistsException.class})
-    public ResponseEntity<String> handleStudentTaken() {
-        return new ResponseEntity<String>("The email provided is already in use by another student.", HttpStatus.CONFLICT);
-    }
-
     @PostMapping("/new-student")
-    public ResponseEntity<Student> addStudent(@Valid @RequestBody StudentDto student) {
-        return new ResponseEntity<>(studentService.addNewStudent(student), HttpStatus.CREATED);
-    }
-
-    @ExceptionHandler({StudentDoesNotExistException.class})
-    public ResponseEntity<String> handleStudentDoesNotExist() {
-        return new ResponseEntity<String>("The student you are looking does not exist.", HttpStatus.CONFLICT);
+    public ResponseEntity<String> addStudent(@Valid @RequestBody StudentDto student) {
+        try {
+            return studentService.addNewStudent(student);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return StudentUtils.getResponseEntity(StudentConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/get-all-students")
@@ -51,8 +45,13 @@ public class StudentController {
     }
 
     @PutMapping("/update-student/{studentId}")
-    public ResponseEntity<Student> updateStudent(@PathVariable("studentId") Long studentId, @Valid @RequestBody StudentDto student) {
-        return new ResponseEntity<>(studentService.updateStudent(student, studentId), HttpStatus.OK);
+    public ResponseEntity<String> updateStudent(@PathVariable("studentId") Long studentId, @Valid @RequestBody StudentDto student) {
+        try {
+            return studentService.updateStudent(student, studentId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return StudentUtils.getResponseEntity(StudentConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @DeleteMapping("/delete-student/{studentId}")
