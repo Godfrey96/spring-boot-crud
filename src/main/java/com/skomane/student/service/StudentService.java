@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface StudentService {
 
-    Student addNewStudent(StudentDto student);
+    ResponseEntity<String> addNewStudent(StudentDto student);
     List<Student> getAllStudent();
     Student getSingleStudentById(Long studentId);
-    Student updateStudent(StudentDto student, Long studentId);
+    ResponseEntity<String> updateStudent(StudentDto student, Long studentId);
     ResponseEntity<String> deleteStudent(Long studentId);
 }

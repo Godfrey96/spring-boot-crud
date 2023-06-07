@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -26,22 +27,21 @@ public class StudentServiceImpl implements StudentService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Student addNewStudent(StudentDto student) {
+    public ResponseEntity<String> addNewStudent(StudentDto student) {
         log.info("Inside addNewStudent() {} ", student);
 
-        Student newStudent = new Student();
-        newStudent.setFirstName(student.getFirstName());
-        newStudent.setLastName(student.getLastName());
-        newStudent.setAge(student.getAge());
-        newStudent.setPhone(student.getPhone());
-        newStudent.setEmail(student.getEmail());
-        newStudent.setPassword(setPasswordEncode(student.getPassword()));
-
         try {
-            return studentRepository.save(newStudent);
+            Student findStudent = studentRepository.findByEmail(student.getEmail());
+            if (findStudent == null) {
+                studentRepository.save(getStudentFromMap(student));
+                return StudentUtils.getResponseEntity("New student added successfully", HttpStatus.CREATED);
+            } else {
+                return StudentUtils.getResponseEntity("Student email already exists", HttpStatus.BAD_REQUEST);
+            }
         } catch (Exception e) {
-            throw new StudentAlreadyExistsException();
+            e.printStackTrace();
         }
+        return StudentUtils.getResponseEntity(StudentConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
@@ -65,23 +65,26 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student updateStudent(StudentDto student, Long studentId) {
+    public ResponseEntity<String> updateStudent(StudentDto student, Long studentId) {
         log.info("Inside updateStudent() {} ", student);
 
-        Student existingStudent = studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentDoesNotExistException());
+        try {
+            Student existingStudent = studentRepository.findById(studentId)
+                    .orElseThrow(() -> new StudentDoesNotExistException());
 
-        existingStudent.setFirstName(student.getFirstName());
-        existingStudent.setLastName(student.getLastName());
-        existingStudent.setAge(student.getAge());
-        existingStudent.setPhone(student.getPhone());
-        existingStudent.setEmail(student.getEmail());
-        existingStudent.setPassword(setPasswordEncode(student.getPassword()));
+            existingStudent.setFirstName(student.getFirstName());
+            existingStudent.setLastName(student.getLastName());
+            existingStudent.setAge(student.getAge());
+            existingStudent.setPhone(student.getPhone());
+            existingStudent.setEmail(student.getEmail());
+            existingStudent.setPassword(setPasswordEncode(student.getPassword()));
 
-        studentRepository.save(existingStudent);
-
-        return existingStudent;
-
+            studentRepository.save(existingStudent);
+            return StudentUtils.getResponseEntity("Student updated successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return StudentUtils.getResponseEntity(StudentConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
@@ -99,6 +102,17 @@ public class StudentServiceImpl implements StudentService {
             e.printStackTrace();
         }
         return StudentUtils.getResponseEntity(StudentConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private Student getStudentFromMap(StudentDto student) {
+        Student newStudent = new Student();
+        newStudent.setFirstName(student.getFirstName());
+        newStudent.setLastName(student.getLastName());
+        newStudent.setAge(student.getAge());
+        newStudent.setPhone(student.getPhone());
+        newStudent.setEmail(student.getEmail());
+        newStudent.setPassword(setPasswordEncode(student.getPassword()));
+        return newStudent;
     }
 
     private String setPasswordEncode(String password) {
