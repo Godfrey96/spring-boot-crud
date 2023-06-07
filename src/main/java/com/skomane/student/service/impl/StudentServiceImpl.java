@@ -35,10 +35,7 @@ public class StudentServiceImpl implements StudentService {
         newStudent.setAge(student.getAge());
         newStudent.setPhone(student.getPhone());
         newStudent.setEmail(student.getEmail());
-//        newStudent.setPassword(passwordEncoder.encode(student.getPassword()));
         newStudent.setPassword(setPasswordEncode(student.getPassword()));
-
-        System.out.println("saved: " + newStudent);
 
         try {
             return studentRepository.save(newStudent);
