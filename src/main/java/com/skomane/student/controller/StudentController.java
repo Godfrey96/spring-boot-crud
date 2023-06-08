@@ -2,8 +2,6 @@ package com.skomane.student.controller;
 
 import com.skomane.student.constants.StudentConstants;
 import com.skomane.student.dto.StudentDto;
-import com.skomane.student.exceptions.StudentAlreadyExistsException;
-import com.skomane.student.exceptions.StudentDoesNotExistException;
 import com.skomane.student.model.Student;
 import com.skomane.student.service.StudentService;
 import com.skomane.student.utils.StudentUtils;
@@ -12,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +31,7 @@ public class StudentController {
      * If an exception occurs during the operation, it returns an error message with HTTP status 500 (Internal Server Error)
      */
     @PostMapping("/new-student")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<String> addStudent(@Valid @RequestBody StudentDto student) {
         try {
             return studentService.addNewStudent(student);

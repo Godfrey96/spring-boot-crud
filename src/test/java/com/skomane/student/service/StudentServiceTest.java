@@ -1,6 +1,5 @@
 package com.skomane.student.service;
 
-import com.skomane.student.config.ApplicationConfig;
 import com.skomane.student.dto.StudentDto;
 import com.skomane.student.model.Student;
 import com.skomane.student.repository.StudentRepository;
@@ -12,14 +11,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,29 +32,22 @@ public class StudentServiceTest {
     private StudentServiceImpl studentService;
     @Mock
     private StudentRepository studentRepository;
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     private Student student1;
     private Student student2;
     private StudentDto studentDto1;
+    private StudentDto studentDto2;
 
     @BeforeEach
     void init() {
+
         student1 = new Student();
         student1.setId(1L);
-        student1.setFirstName("Mogau");
-        student1.setLastName("Ngwatle");
-        student1.setAge(25);
-        student1.setPhone("0720461090");
-        student1.setEmail("mogau@gmail.com");
 
         student2 = new Student();
         student2.setId(2L);
-        student2.setFirstName("Skomane");
-        student2.setLastName("Mohlala");
-        student2.setAge(30);
-        student2.setPhone("0720461090");
-        student2.setEmail("skomane@gmail.com");
 
         studentDto1 = new StudentDto();
         studentDto1.setFirstName("Godfrey");
@@ -63,30 +55,61 @@ public class StudentServiceTest {
         studentDto1.setAge(15);
         studentDto1.setPhone("0720461090");
         studentDto1.setEmail("godfrey@gmail.com");
-        studentDto1.setPassword("123456789");
-//        studentDto1.setPassword(passwordEncoder.encode("123456789"));
+        studentDto1.setPassword(passwordEncoder.encode("123456789"));
 
-        System.out.println("student-pass: " + studentDto1.getPassword());
+        studentDto2 = new StudentDto();
+        studentDto2.setFirstName("Godfrey");
+        studentDto2.setLastName("Ngwatle");
+        studentDto2.setAge(15);
+        studentDto2.setPhone("0720461090");
+        studentDto2.setEmail("godfrey@gmail.com");
+        studentDto2.setPassword(passwordEncoder.encode("123456789"));
     }
 
-//    @Test
-//    @DisplayName("Should save the student to database")
-//    void shouldSaveStudent() {
-//
-////        when().thenReturn(new BCryptPasswordEncoder());
-//
-//        System.out.println("student: " + studentDto1);
-//        student1.setPassword(passwordEncoder.encode("123456789"));
-//
-//        Student newStudent = studentService.addNewStudent(studentDto1);
-//
-//        assertNotNull(newStudent);
-//        assertThat(newStudent.getFirstName()).isEqualTo("Godfrey");
-//
-//    }
+    @Test
+    @DisplayName("should add a new student")
+    void shouldAddNewStudentSuccess() {
+
+        when(studentRepository.findByEmail(anyString())).thenReturn(null);
+
+        ResponseEntity<String> response = studentService.addNewStudent(studentDto1);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals("{\"message\":\"New student added successfully\"}", response.getBody());
+        verify(studentRepository, times(1)).findByEmail(anyString());
+        verify(studentRepository, times(1)).save(any(Student.class));
+    }
 
     @Test
-    @DisplayName("Should fetch all students od size 2")
+    @DisplayName("should test email exists")
+    void shouldTestEmailExists() {
+
+        when(studentRepository.findByEmail(anyString())).thenReturn(new Student());
+
+        ResponseEntity<String> response = studentService.addNewStudent(studentDto1);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("{\"message\":\"Student email already exists\"}", response.getBody());
+        verify(studentRepository, times(1)).findByEmail(anyString());
+        verify(studentRepository, times(0)).save(any(Student.class));
+    }
+
+    @Test
+    @DisplayName("should test add student exception if errors occurs")
+    void shouldTestAddStudentException() {
+
+        when(studentRepository.findByEmail(anyString())).thenThrow(new RuntimeException());
+
+        ResponseEntity<String> response = studentService.addNewStudent(studentDto1);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("{\"message\":\"Something Went Wrong\"}", response.getBody());
+        verify(studentRepository, times(1)).findByEmail(anyString());
+        verify(studentRepository, times(0)).save(any(Student.class));
+    }
+
+    @Test
+    @DisplayName("Should fetch all students of size 2")
     void shouldFetchAllStudent() {
 
         List<Student> studentList = new ArrayList<>();
