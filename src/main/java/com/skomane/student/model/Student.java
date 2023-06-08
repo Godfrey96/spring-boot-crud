@@ -36,6 +36,5 @@ public class Student {
 
     @JsonIgnore
     @NotBlank(message = "Password field cannot be empty")
-//    @Min(value = 6, message = "Password characters cannot be less than 6")
     private String password;
 }
