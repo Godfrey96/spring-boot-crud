@@ -14,8 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -79,7 +81,7 @@ public class StudentServiceImpl implements StudentService {
         log.info("Inside getSingleStudentById() {} ", studentId);
 
         return studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentDoesNotExistException());
+                .orElseThrow(() -> new StudentDoesNotExistException(studentId));
     }
 
     /**
@@ -97,7 +99,7 @@ public class StudentServiceImpl implements StudentService {
 
         try {
             Student existingStudent = studentRepository.findById(studentId)
-                    .orElseThrow(() -> new StudentDoesNotExistException());
+                    .orElseThrow(() -> new StudentDoesNotExistException(studentId));
 
             existingStudent.setFirstName(student.getFirstName());
             existingStudent.setLastName(student.getLastName());
@@ -128,7 +130,7 @@ public class StudentServiceImpl implements StudentService {
 
         try {
             Student existingStudent = studentRepository.findById(studentId)
-                    .orElseThrow(() -> new StudentDoesNotExistException());
+                    .orElseThrow(() -> new StudentDoesNotExistException(studentId));
 
             studentRepository.delete(existingStudent);
 
@@ -144,7 +146,7 @@ public class StudentServiceImpl implements StudentService {
      * @param student The StudentDto object to convert
      * @return A new Student object with the information from the StudentDto object
      */
-    private Student getStudentFromMap(StudentDto student) {
+    public Student getStudentFromMap(StudentDto student) {
         Student newStudent = new Student();
         newStudent.setFirstName(student.getFirstName());
         newStudent.setLastName(student.getLastName());
