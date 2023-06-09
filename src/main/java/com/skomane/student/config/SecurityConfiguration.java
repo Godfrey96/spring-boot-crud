@@ -30,7 +30,7 @@ public class SecurityConfiguration {
                            "/swagger-ui.html"
                    ).permitAll();
                     auth.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll();
-                    auth.anyRequest().authenticated();
+//                    auth.anyRequest().authenticated();
                 });
         http.headers().frameOptions().sameOrigin();
 

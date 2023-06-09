@@ -7,12 +7,14 @@ import com.skomane.student.service.StudentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
@@ -30,6 +32,8 @@ public class StudentControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private StudentService studentService;
+    @Mock
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private ObjectMapper objectMapper;
     private StudentDto studentDto;
@@ -59,25 +63,25 @@ public class StudentControllerTest {
     void shouldAddNewStudent() throws Exception {
 
         Student newStudent = new Student();
-        newStudent.setFirstName(studentDto1.getFirstName());
-        newStudent.setLastName(studentDto1.getLastName());
-        newStudent.setPhone(studentDto1.getPhone());
-        newStudent.setAge(studentDto1.getAge());
-        newStudent.setEmail(studentDto1.getEmail());
-        newStudent.setPassword(studentDto1.getPassword());
+        newStudent.setFirstName(studentDto.getFirstName());
+        newStudent.setLastName(studentDto.getLastName());
+        newStudent.setPhone(studentDto.getPhone());
+        newStudent.setAge(studentDto.getAge());
+        newStudent.setEmail(studentDto.getEmail());
+        newStudent.setPassword(passwordEncoder.encode(studentDto.getPassword()));
 
         when(studentService.addNewStudent(any(StudentDto.class))).thenReturn(ResponseEntity.status(HttpStatus.CREATED).body("Student updated successfully"));
 
         mockMvc.perform(post("/api/v1/student/new-student")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(studentDto1)))
+                .content(objectMapper.writeValueAsString(studentDto)))
                 .andExpect(status().isCreated())
-                .andExpect((ResultMatcher) jsonPath("$.firstName", is(studentDto1.getFirstName())))
-                .andExpect((ResultMatcher) jsonPath("$.lastName", is(studentDto1.getLastName())))
-                .andExpect((ResultMatcher) jsonPath("$.phone", is(studentDto1.getPhone())))
-                .andExpect((ResultMatcher) jsonPath("$.age", is(studentDto1.getAge())))
-                .andExpect((ResultMatcher) jsonPath("$.email", is(studentDto1.getEmail())))
-                .andExpect((ResultMatcher) jsonPath("$.password", is(studentDto1.getPassword())));
+                .andExpect((ResultMatcher) jsonPath("$.firstName", is(studentDto.getFirstName())))
+                .andExpect((ResultMatcher) jsonPath("$.lastName", is(studentDto.getLastName())))
+                .andExpect((ResultMatcher) jsonPath("$.phone", is(studentDto.getPhone())))
+                .andExpect((ResultMatcher) jsonPath("$.age", is(studentDto.getAge())))
+                .andExpect((ResultMatcher) jsonPath("$.email", is(studentDto.getEmail())))
+                .andExpect((ResultMatcher) jsonPath("$.password", is(studentDto.getPassword())));
     }
 
 }
