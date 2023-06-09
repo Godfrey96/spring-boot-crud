@@ -2,6 +2,8 @@ package com.skomane.student.controller;
 
 import com.skomane.student.constants.StudentConstants;
 import com.skomane.student.dto.StudentDto;
+import com.skomane.student.exceptions.StudentDoesNotExistException;
+import com.skomane.student.exceptions.StudentErrorException;
 import com.skomane.student.model.Student;
 import com.skomane.student.service.StudentService;
 import com.skomane.student.utils.StudentUtils;
@@ -41,6 +43,11 @@ public class StudentController {
         return StudentUtils.getResponseEntity(StudentConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler({StudentErrorException.class})
+    public ResponseEntity<String> handleStudentErrorException() {
+        return StudentUtils.getResponseEntity("Error while fetching students.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     /**
      * Retrieves all students by processing the HTTP GET request
      * @return A ResponseEntity<List<Student>> containing the list of all students and HTTP status 200 (OK)
@@ -48,6 +55,11 @@ public class StudentController {
     @GetMapping("/get-all-students")
     public ResponseEntity<List<Student>> getAllStudents() {
         return new ResponseEntity<>(studentService.getAllStudent(), HttpStatus.OK);
+    }
+
+    @ExceptionHandler({StudentDoesNotExistException.class})
+    public ResponseEntity<String> handleStudentDoesNotExist() {
+        return StudentUtils.getResponseEntity("The student you are looking does not exist.", HttpStatus.NOT_FOUND);
     }
 
     /**

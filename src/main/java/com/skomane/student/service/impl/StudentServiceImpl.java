@@ -98,18 +98,21 @@ public class StudentServiceImpl implements StudentService {
         log.info("Inside updateStudent() {} ", student);
 
         try {
-            Student existingStudent = studentRepository.findById(studentId)
-                    .orElseThrow(() -> new StudentDoesNotExistException(studentId));
+            Optional<Student> existingStudent = studentRepository.findById(studentId);
 
-            existingStudent.setFirstName(student.getFirstName());
-            existingStudent.setLastName(student.getLastName());
-            existingStudent.setAge(student.getAge());
-            existingStudent.setPhone(student.getPhone());
-            existingStudent.setEmail(student.getEmail());
-            existingStudent.setPassword(setPasswordEncode(student.getPassword()));
+            if (!existingStudent.isEmpty()) {
+                existingStudent.get().setFirstName(student.getFirstName());
+                existingStudent.get().setLastName(student.getLastName());
+                existingStudent.get().setAge(student.getAge());
+                existingStudent.get().setPhone(student.getPhone());
+                existingStudent.get().setEmail(student.getEmail());
+                existingStudent.get().setPassword(setPasswordEncode(student.getPassword()));
 
-            studentRepository.save(existingStudent);
-            return StudentUtils.getResponseEntity("Student updated successfully", HttpStatus.OK);
+                studentRepository.save(existingStudent.get());
+                return StudentUtils.getResponseEntity("Student updated successfully", HttpStatus.OK);
+            } else {
+                return StudentUtils.getResponseEntity("The student you are trying to update does not exist.", HttpStatus.BAD_REQUEST);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -129,12 +132,15 @@ public class StudentServiceImpl implements StudentService {
         log.info("Inside updateStudent() {} ", studentId);
 
         try {
-            Student existingStudent = studentRepository.findById(studentId)
-                    .orElseThrow(() -> new StudentDoesNotExistException(studentId));
+            Optional<Student> existingStudent = studentRepository.findById(studentId);
 
-            studentRepository.delete(existingStudent);
+            if (!existingStudent.isEmpty()) {
+                studentRepository.delete(existingStudent.get());
 
-            return StudentUtils.getResponseEntity("Student deleted successfully", HttpStatus.OK);
+                return StudentUtils.getResponseEntity("Student deleted successfully", HttpStatus.OK);
+            } else {
+                return StudentUtils.getResponseEntity("The student you are trying to delete does not exist.", HttpStatus.BAD_REQUEST);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
