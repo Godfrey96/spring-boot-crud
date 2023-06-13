@@ -24,6 +24,9 @@ public class StudentRepositoryTest {
     private StudentDto studentDto;
     private StudentDto studentDto1;
 
+    /**
+     * Initializes the test setup before each test case.
+     */
     @BeforeEach
     void init() {
 
@@ -44,6 +47,9 @@ public class StudentRepositoryTest {
         studentDto1.setPassword("123456789");
     }
 
+    /**
+     * Tests the saving of a student in the database.
+     */
     @Test
     @DisplayName("should save the student in the database")
     void shouldSaveStudent() {
@@ -62,6 +68,9 @@ public class StudentRepositoryTest {
         assertEquals("Godfrey", saveStudent.getFirstName());
     }
 
+    /**
+     * Tests the fetching of all students from the database.
+     */
     @Test
     @DisplayName("should fetch all the students from the database")
     void shouldFetchAllStudents() {
@@ -91,6 +100,9 @@ public class StudentRepositoryTest {
         assertEquals(2, students.size());
     }
 
+    /**
+     * Tests the retrieval of a student by ID from the database.
+     */
     @Test
     @DisplayName("should return student by id")
     void shouldReturnStudentById() {
@@ -111,6 +123,9 @@ public class StudentRepositoryTest {
         assertEquals("Godfrey", getStudent.getFirstName());
     }
 
+    /**
+     * Tests the update of an existing student's first name in the database.
+     */
     @Test
     @DisplayName("should update an existing student from the database")
     void shouldUpdateStudentFirstName() {
@@ -131,6 +146,9 @@ public class StudentRepositoryTest {
         assertEquals("Godfrey", updateStudent.getFirstName());
     }
 
+    /**
+     * Tests the deletion of an existing student from the database.
+     */
     @Test
     @DisplayName("should delete an existing student from the database")
     void shouldDeleteStudent() {
