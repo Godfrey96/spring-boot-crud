@@ -4,7 +4,7 @@ import com.skomane.student.constants.StudentConstants;
 import com.skomane.student.dto.StudentDto;
 import com.skomane.student.exceptions.StudentDoesNotExistException;
 import com.skomane.student.exceptions.StudentErrorException;
-import com.skomane.student.model.Student;
+import com.skomane.student.entity.Student;
 import com.skomane.student.service.StudentService;
 import com.skomane.student.utils.StudentUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,7 +1,7 @@
 package com.skomane.student.repository;
 
 import com.skomane.student.dto.StudentDto;
-import com.skomane.student.model.Student;
+import com.skomane.student.entity.Student;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

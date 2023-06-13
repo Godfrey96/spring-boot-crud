@@ -1,6 +1,7 @@
 package com.skomane.student.dto;
 
 import lombok.Data;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Data
 public class StudentDto {
@@ -10,4 +11,6 @@ public class StudentDto {
     private Integer age;
     private String email;
     private String password;
+
+
 }

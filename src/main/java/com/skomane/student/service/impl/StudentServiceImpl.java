@@ -4,9 +4,10 @@ import com.skomane.student.constants.StudentConstants;
 import com.skomane.student.dto.StudentDto;
 import com.skomane.student.exceptions.StudentDoesNotExistException;
 import com.skomane.student.exceptions.StudentErrorException;
-import com.skomane.student.model.Student;
+import com.skomane.student.entity.Student;
 import com.skomane.student.repository.StudentRepository;
 import com.skomane.student.service.StudentService;
+import com.skomane.student.utils.StudentMapper;
 import com.skomane.student.utils.StudentUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.skomane.student.utils.StudentMapper.mapStudentDtoToStudent;
+
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +45,8 @@ public class StudentServiceImpl implements StudentService {
         try {
             Student findStudent = studentRepository.findByEmail(student.getEmail());
             if (findStudent == null) {
-                studentRepository.save(getStudentFromMap(student));
+                student.setPassword(setPasswordEncode(student.getPassword()));
+                studentRepository.save(mapStudentDtoToStudent(null, student));
                 return StudentUtils.getResponseEntity("New student added successfully", HttpStatus.CREATED);
             } else {
                 return StudentUtils.getResponseEntity("Student email already exists", HttpStatus.BAD_REQUEST);
@@ -101,12 +105,7 @@ public class StudentServiceImpl implements StudentService {
             Optional<Student> existingStudent = studentRepository.findById(studentId);
 
             if (!existingStudent.isEmpty()) {
-                existingStudent.get().setFirstName(student.getFirstName());
-                existingStudent.get().setLastName(student.getLastName());
-                existingStudent.get().setAge(student.getAge());
-                existingStudent.get().setPhone(student.getPhone());
-                existingStudent.get().setEmail(student.getEmail());
-                existingStudent.get().setPassword(setPasswordEncode(student.getPassword()));
+                StudentMapper.mapStudentDtoToStudent(existingStudent.get(), student);
 
                 studentRepository.save(existingStudent.get());
                 return StudentUtils.getResponseEntity("Student updated successfully", HttpStatus.OK);
@@ -152,16 +151,16 @@ public class StudentServiceImpl implements StudentService {
      * @param student The StudentDto object to convert
      * @return A new Student object with the information from the StudentDto object
      */
-    public Student getStudentFromMap(StudentDto student) {
-        Student newStudent = new Student();
-        newStudent.setFirstName(student.getFirstName());
-        newStudent.setLastName(student.getLastName());
-        newStudent.setAge(student.getAge());
-        newStudent.setPhone(student.getPhone());
-        newStudent.setEmail(student.getEmail());
-        newStudent.setPassword(setPasswordEncode(student.getPassword()));
-        return newStudent;
-    }
+//    public Student mapStudentDtoToStudent(StudentDto student) {
+//        Student newStudent = new Student();
+//        newStudent.setFirstName(student.getFirstName());
+//        newStudent.setLastName(student.getLastName());
+//        newStudent.setAge(student.getAge());
+//        newStudent.setPhone(student.getPhone());
+//        newStudent.setEmail(student.getEmail());
+//        newStudent.setPassword(setPasswordEncode(student.getPassword()));
+//        return newStudent;
+//    }
 
     /**
     * This method is used to encodes a password using the password encoder

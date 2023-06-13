@@ -1,4 +1,4 @@
-package com.skomane.student.model;
+package com.skomane.student.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

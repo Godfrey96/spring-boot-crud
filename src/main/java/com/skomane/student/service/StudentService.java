@@ -1,7 +1,7 @@
 package com.skomane.student.service;
 
 import com.skomane.student.dto.StudentDto;
-import com.skomane.student.model.Student;
+import com.skomane.student.entity.Student;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

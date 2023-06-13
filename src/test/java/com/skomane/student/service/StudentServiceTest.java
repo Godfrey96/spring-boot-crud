@@ -1,7 +1,7 @@
 package com.skomane.student.service;
 
 import com.skomane.student.dto.StudentDto;
-import com.skomane.student.model.Student;
+import com.skomane.student.entity.Student;
 import com.skomane.student.repository.StudentRepository;
 import com.skomane.student.service.impl.StudentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
