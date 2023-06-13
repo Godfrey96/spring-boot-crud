@@ -40,6 +40,9 @@ public class StudentServiceTest {
     private StudentDto studentDto1;
     private StudentDto studentDto2;
 
+    /**
+     * Initializes the test setup before each test case.
+     */
     @BeforeEach
     void init() {
 
@@ -55,7 +58,7 @@ public class StudentServiceTest {
         studentDto1.setAge(15);
         studentDto1.setPhone("0720461090");
         studentDto1.setEmail("godfrey@gmail.com");
-        studentDto1.setPassword(passwordEncoder.encode("123456789"));
+        studentDto1.setPassword("123456789");
 
         studentDto2 = new StudentDto();
         studentDto2.setFirstName("Godfrey");
@@ -63,9 +66,12 @@ public class StudentServiceTest {
         studentDto2.setAge(15);
         studentDto2.setPhone("0720461090");
         studentDto2.setEmail("godfrey@gmail.com");
-        studentDto2.setPassword(passwordEncoder.encode("123456789"));
+        studentDto2.setPassword("123456789");
     }
 
+    /**
+     * Tests the success of adding a new student.
+     */
     @Test
     @DisplayName("should add a new student")
     void shouldAddNewStudentSuccess() {
@@ -80,6 +86,9 @@ public class StudentServiceTest {
         verify(studentRepository, times(1)).save(any(Student.class));
     }
 
+    /**
+     * Tests the case where the email already exists in the student repository.
+     */
     @Test
     @DisplayName("should test email exists")
     void shouldTestEmailExists() {
@@ -94,6 +103,9 @@ public class StudentServiceTest {
         verify(studentRepository, times(0)).save(any(Student.class));
     }
 
+    /**
+     * Tests the case where an exception occurs while adding a new student.
+     */
     @Test
     @DisplayName("should test add student exception if errors occurs")
     void shouldTestAddStudentException() {
@@ -108,6 +120,9 @@ public class StudentServiceTest {
         verify(studentRepository, times(0)).save(any(Student.class));
     }
 
+    /**
+     * Tests the fetching of all students and verifies the size of the returned list.
+     */
     @Test
     @DisplayName("Should fetch all students of size 2")
     void shouldFetchAllStudent() {
@@ -124,6 +139,9 @@ public class StudentServiceTest {
         assertNotNull(students);
     }
 
+    /**
+     * Tests the retrieval of a single student by ID.
+     */
     @Test
     @DisplayName("Should get single student by id")
     void shouldGetStudentById() {
@@ -136,6 +154,9 @@ public class StudentServiceTest {
         assertEquals(existingStudent.getId(), 1L);
     }
 
+    /**
+     * Tests the deletion of an existing student.
+     */
     @Test
     @DisplayName("Should delete an existing student")
     void shouldDeleteStudent() {
